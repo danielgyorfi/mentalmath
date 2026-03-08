@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -27,7 +28,7 @@ export default function NavBar({ role, name }: Props) {
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Logo */}
         <Link href={homeHref} className="flex items-center gap-2">
-          <span className="text-2xl">🧮</span>
+          <Image src="/capymath-icon.png" alt="CapyMath" width={28} height={28} className="rounded-full" />
           <span className="font-display font-extrabold text-xl text-brand-700 hidden sm:block">
             MentalMath
           </span>

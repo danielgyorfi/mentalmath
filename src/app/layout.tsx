@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   },
   description:
     'A fun mental-math practice platform for kids aged 8–13. Multiplication, division, fractions, decimals and more.',
-  icons: { icon: '/favicon.svg' },
+  icons: { icon: '/capymath-icon.png' },
 };
 
 export const viewport: Viewport = {

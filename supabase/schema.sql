@@ -100,15 +100,28 @@ create table public.exercise_sessions (
 -- ═══════════════════════════════════════════════════════════════════
 
 -- Auto-create profile on signup
+-- NOTE: `security definer set search_path = ''` is required by Supabase's
+-- security linter. With an empty search_path all types and tables must be
+-- fully schema-qualified (public.user_role, public.profiles, etc.).
+-- The EXCEPTION block prevents a trigger failure from blocking auth entirely
+-- while still logging the error for debugging.
 create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer as $$
+returns trigger language plpgsql
+security definer set search_path = ''
+as $$
 begin
   insert into public.profiles (id, full_name, role)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', 'New User'),
-    coalesce((new.raw_user_meta_data->>'role')::user_role, 'student')
+    coalesce(
+      (new.raw_user_meta_data->>'role')::public.user_role,
+      'student'::public.user_role
+    )
   );
+  return new;
+exception when others then
+  raise log 'handle_new_user failed for user %: %', new.id, sqlerrm;
   return new;
 end;
 $$;
@@ -119,7 +132,9 @@ create trigger on_auth_user_created
 
 -- Auto-update updated_at timestamps
 create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+security invoker set search_path = ''
+as $$
 begin
   new.updated_at = now();
   return new;

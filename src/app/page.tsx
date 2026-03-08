@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
@@ -26,7 +27,7 @@ export default async function LandingPage() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto w-full">
         <div className="flex items-center gap-2">
-          <span className="text-3xl">🧮</span>
+          <Image src="/capymath-icon.png" alt="CapyMath" width={36} height={36} className="rounded-full" />
           <span className="font-display font-800 text-2xl text-brand-700">MentalMath</span>
         </div>
         <div className="flex gap-3">

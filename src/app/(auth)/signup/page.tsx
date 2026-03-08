@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -54,7 +55,7 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <span className="text-4xl">🧮</span>
+            <Image src="/capymath-icon.png" alt="CapyMath" width={48} height={48} className="rounded-full" />
             <span className="font-display font-extrabold text-3xl text-brand-700">MentalMath</span>
           </Link>
           <p className="text-gray-500 mt-2">Create your free account</p>

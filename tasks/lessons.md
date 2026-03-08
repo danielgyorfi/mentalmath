@@ -50,6 +50,37 @@ module.exports = createJestConfig(config);
 
 ---
 
+### DEC-007 · Supabase `security definer` functions require `set search_path = ''`
+
+**Context:** Signup trigger `handle_new_user()` caused "Database error saving new user"
+
+Two bugs in the original trigger:
+1. `'student'` fallback in `coalesce` was an untyped text literal — needs `'student'::public.user_role`
+2. Missing `set search_path = ''` — Supabase's security linter rejects `security definer` functions without an explicit search path, causing the trigger to fail at runtime on newer projects
+
+**Rule:** All `security definer` functions must:
+- Include `set search_path = ''` in the function signature
+- Use fully schema-qualified names everywhere in the body (`public.tablename`, `public.typename`)
+- Include an `EXCEPTION WHEN OTHERS THEN` block with a `raise log` so trigger failures never block auth
+
+```sql
+-- ✅ Correct pattern
+create or replace function public.my_trigger_fn()
+returns trigger language plpgsql
+security definer set search_path = ''
+as $$
+begin
+  insert into public.my_table ...
+  return new;
+exception when others then
+  raise log 'my_trigger_fn failed: %', sqlerrm;
+  return new;
+end;
+$$;
+```
+
+---
+
 ## 🐛 Bugs Found (document before fixing)
 
 ### BUG-001 · `generateChoices` — infinite loop risk for non-numeric answers

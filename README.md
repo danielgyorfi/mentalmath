@@ -104,20 +104,57 @@ cd mentalmath-app
 npm install
 ```
 
-### 2. Create a Supabase project
+### 2. Create a Supabase project and get your keys
 
-1. Go to [app.supabase.com](https://app.supabase.com) → **New project**
-2. Open **SQL Editor** and run the contents of `supabase/schema.sql`
-3. Go to **Project Settings → API** and copy:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon/public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY`
+**a) Create the project**
+1. Go to [app.supabase.com](https://app.supabase.com) and sign in (GitHub login works)
+2. Click **"New project"**, give it a name (e.g. `mentalmath`), set a database password, choose your nearest region
+3. Wait ~2 minutes for provisioning
+
+**b) Run the database schema**
+1. In the left sidebar click **"SQL Editor"**
+2. Click **"New query"**
+3. Paste the entire contents of `supabase/schema.sql` from this repo
+4. Click **"Run"** — you should see "Success. No rows returned."
+
+**c) Find your three API keys**
+
+In the left sidebar click **⚙️ Project Settings → API**. You'll see:
+
+```
+Project URL
+  https://xxxxxxxxxxxx.supabase.co          ← NEXT_PUBLIC_SUPABASE_URL
+
+Project API Keys
+  anon  public
+  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…   ← NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  service_role  secret  ⚠️ never expose publicly
+  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…   ← SUPABASE_SERVICE_ROLE_KEY
+```
+
+| Key | Safe to expose? | Purpose |
+|-----|----------------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ Yes (public) | Identifies your Supabase project |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ Yes (public) | Used in the browser; Row Level Security limits what it can do |
+| `SUPABASE_SERVICE_ROLE_KEY` | ❌ No (server only) | Bypasses RLS — only used in server API routes, never in frontend code |
+
+> The `NEXT_PUBLIC_` prefix intentionally bundles those values into the browser.
+> **Never** add that prefix to `SUPABASE_SERVICE_ROLE_KEY`.
 
 ### 3. Configure environment
 
 ```bash
 cp .env.example .env.local
-# Fill in your Supabase credentials
+```
+
+Open `.env.local` and paste your three keys:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ### 4. Run locally
