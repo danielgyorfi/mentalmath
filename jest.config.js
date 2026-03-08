@@ -1,16 +1,16 @@
-import type { Config } from 'jest';
-import nextJest from 'next/jest.js';
+const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
   // Path to Next.js app (so jest can load next.config.js and .env files)
   dir: './',
 });
 
-const config: Config = {
+/** @type {import('jest').Config} */
+const config = {
   coverageProvider: 'v8',
   testEnvironment: 'jest-environment-jsdom',
 
-  // Setup file to add custom matchers
+  // Setup file to add custom jest-dom matchers
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   // Module name mapper for @/ path alias
@@ -34,7 +34,6 @@ const config: Config = {
 
   // Ignore
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
-
 };
 
-export default createJestConfig(config);
+module.exports = createJestConfig(config);

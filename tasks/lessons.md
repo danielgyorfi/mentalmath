@@ -30,6 +30,26 @@ accidentally committing `.env.local`, build artifacts, or unrelated changes.
 
 ---
 
+### DEC-006 · Jest config must be `.js`, not `.ts` — `ts-node` not required
+
+**Context:** `jest.config.ts` caused `Error: 'ts-node' is required for the TypeScript configuration files.`
+
+Jest parses its own config file before the TypeScript transform is set up, so a
+`.ts` config requires `ts-node` as an extra dev dependency. Using `jest.config.js`
+with `@type {import('jest').Config}` JSDoc gives full type hints with zero extra deps.
+
+```js
+// ✅ Use this — jest.config.js (CommonJS, no ts-node needed)
+const nextJest = require('next/jest');
+/** @type {import('jest').Config} */
+const config = { ... };
+module.exports = createJestConfig(config);
+```
+
+**Rule:** Always use `jest.config.js`, never `jest.config.ts`.
+
+---
+
 ## 🐛 Bugs Found (document before fixing)
 
 ### BUG-001 · `generateChoices` — infinite loop risk for non-numeric answers
